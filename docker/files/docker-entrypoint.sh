@@ -99,5 +99,6 @@ else
     FLAGS+=( --start-server "$SAVE_NAME" )
 fi
 
+python3 /opt/factorioAgonesHealthcheck.py &
 # shellcheck disable=SC2086
 exec $SU_EXEC /opt/factorio/bin/x64/factorio "${FLAGS[@]}" "$@"

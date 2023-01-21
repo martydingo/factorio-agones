@@ -27,14 +27,16 @@ ENV PORT=34197 \
     PGID="$PGID"
 
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
+COPY files/factorioAgonestHealthcheck.py /opt/
+COPY files/requirements.txt /opt/
 RUN set -ox pipefail \
     && if [[ "${VERSION}" == "" ]]; then \
-        echo "build-arg VERSION is required" \
-        && exit 1; \
+    echo "build-arg VERSION is required" \
+    && exit 1; \
     fi \
     && if [[ "${SHA256}" == "" ]]; then \
-        echo "build-arg SHA256 is required" \
-        && exit 1; \
+    echo "build-arg SHA256 is required" \
+    && exit 1; \
     fi \
     && archive="/tmp/factorio_headless_x64_$VERSION.tar.xz" \
     && mkdir -p /opt /factorio \
@@ -50,7 +52,10 @@ RUN set -ox pipefail \
     && mkdir -p /opt/factorio/config/ \
     && addgroup -g "$PGID" -S "$GROUP" \
     && adduser -u "$PUID" -G "$GROUP" -s /bin/sh -SDH "$USER" \
-    && chown -R "$USER":"$GROUP" /opt/factorio /factorio
+    && chown -R "$USER":"$GROUP" /opt/factorio /factorio \
+    && apk add python3 \
+    && python3 -m ensurepip \
+    && pip3 install -r /opt/requirements.txt
 
 COPY files/*.sh /
 COPY files/config.ini /opt/factorio/config/config.ini
